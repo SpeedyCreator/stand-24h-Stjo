@@ -1,33 +1,40 @@
-char i =0;
-char  a =0;
-char b=0;
-
-
+#include <SoftwareSerial.h>
+SoftwareSerial Bluetooth(2,4); // D2 = TX - D4 = RX
+String Trame = "";
+#define CartDebut  "#";
+#define  CartFin "$";
+int CapTemp = 0 ;
+int CapTension = 1;
+int ValeurSortiTemp ;
+int R1 = 10000;
+int ValeurTempFinal;
+float Tension ; 
+int ValeurtensionFinal ;
 void setup(){
+  Serial.begin(9600);
+  Bluetooth.begin(9600);
 
- Serial.begin(9600);
- for(i=0;i<25;i++){
-
-    Serial.println('l');}
-    Serial.print('\n');
-    delay(2000);
+  
 }
 
 
 void loop(){
+  ValeurSortiTemp = analogRead(CapTemp);
+  ValeurTempFinal= (R1+ValeurSortiTemp*5) / ValeurSortiTemp ;
 
- for(i=0;i<25;i++){
-     for(a=0;a<i;a++){
-      if((a==9)||(a==19)||(a==24))
-          Serial.println('l');
-      else
-          Serial.println('d');   
-     }
-     for(b=0;b<25-i;b++){
-          Serial.println('l');
-     }
+  Tension = analogRead(CapTension)/41.00 ;
 
+  ValeurtensionFinal = Tension*100;
 
-     delay(2000);
-  }
+  Trame =  Trame + CartDebut ;
+  Trame = Trame + "/";
+  Trame = Trame + ValeurTempFinal;
+  Trame = Trame + "/";
+  Trame = Trame + ValeurtensionFinal;
+  Trame = Trame + "/";
+  Trame = Trame + CartFin;
+  Bluetooth.println(Trame);
+  Serial.println(Trame);
+  delay(500);
+  Trame = "";
 }
